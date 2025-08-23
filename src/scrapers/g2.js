@@ -1,4 +1,3 @@
-// src/scrapers/g2.js
 import puppeteer from 'puppeteer';
 import fs from 'fs';
 
@@ -9,14 +8,14 @@ export async function scrapeG2(company = 'zoom') {
   console.log(`Scraping G2 (${company})...`);
 
   const browser = await puppeteer.launch({
-    headless: false, // headful to look human
+    headless: false, 
     defaultViewport: null,
     args: ['--no-sandbox', '--disable-setuid-sandbox'],
   });
 
   const page = await browser.newPage();
 
-  // Set a real user-agent to bypass bot detection
+  // bypass bot detection
   await page.setUserAgent(
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36',
   );
@@ -42,13 +41,13 @@ export async function scrapeG2(company = 'zoom') {
     }
   });
 
-  // Extra wait to ensure JS-loaded content appears
+  // delay for content loading
   await delay(3000);
 
-  // Save debug screenshot + HTML
-  await page.screenshot({ path: 'g2_debug.png', fullPage: true });
+  // save for debugging
+  await page.screenshot({ path: 'debug/g2_debug.png', fullPage: true });
   const html = await page.content();
-  fs.writeFileSync('g2_debug.html', html);
+  fs.writeFileSync('debug/g2_debug.html', html);
 
   // Extract reviews
   const reviews = await page.$$eval('article', (cards) =>
@@ -63,7 +62,7 @@ export async function scrapeG2(company = 'zoom') {
   );
 
   await browser.close();
-  console.log('✅ G2 Reviews:', reviews);
+  console.log(' G2 Reviews:', reviews);
   return reviews;
 }
 

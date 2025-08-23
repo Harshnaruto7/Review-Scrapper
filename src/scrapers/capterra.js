@@ -39,14 +39,14 @@ export async function scrapeCapterra(company = 'Notion') {
 
   // Extract reviews
   const reviews = await page.$$eval('[data-test-id="review-cards-container"] > div', (cards) =>
-    cards.slice(0, 5).map((card) => {
+    cards.map((card) => {
       // Title
       const titleEl = card.querySelector('h3');
 
       // Review text
       const textEl = card.querySelector('div.space-y-6');
 
-      // Author extraction (updated)
+      // Author extraction
       let author = '';
       const authorContainer = card.querySelector('div.typo-10.text-neutral-90.w-full');
       if (authorContainer) {
@@ -88,10 +88,25 @@ export async function scrapeCapterra(company = 'Notion') {
     fs.mkdirSync('data');
   }
 
+  // Generate versioned filename
+  function getNextFileName(baseName) {
+    let counter = 1;
+    let fileName = `data/${baseName}_${counter}.json`;
+
+    while (fs.existsSync(fileName)) {
+      counter++;
+      fileName = `data/${baseName}_${counter}.json`;
+    }
+
+    return fileName;
+  }
+
+  const baseName = `${company}_capterra_reviews`;
+  const fileName = getNextFileName(baseName);
+
   // Save to JSON file
-  const fileName = `data/${company}_capterra_reviews.json`;
   fs.writeFileSync(fileName, JSON.stringify(reviews, null, 2));
-  console.log(`✅ Capterra Reviews saved to ${fileName}`);
+  console.log(` Capterra Reviews saved to ${fileName}`);
 
   return reviews;
 }

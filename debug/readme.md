@@ -1,0 +1,1 @@
+# Here you can get Debug info for the website that is not working in screen-shot and  html format

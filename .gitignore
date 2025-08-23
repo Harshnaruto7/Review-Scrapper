@@ -26,7 +26,3 @@ node_modules
 data
 logs
 .DS_Store
-
-
-
-debug/
